@@ -1,0 +1,7 @@
+Site,APIC IP,Node Type,Node Role,POD ID,Serial Number,Node Name,Node ID
+Datacenter1,172.22.2.240,unspecified,leaf,1,TEP-1-101,Leaf-101,101
+Datacenter1,172.22.2.240,unspecified,leaf,1,TEP-1-102,Leaf-102,102
+Datacenter1,172.22.2.240,unspecified,spine,1,TEP-1-103,Spine-201,201
+Datacenter2,172.22.2.241,unspecified,leaf,1,TEP-1-101,Leaf-101,101
+Datacenter2,172.22.2.241,unspecified,leaf,1,TEP-1-102,Leaf-102,102
+Datacenter2,172.22.2.241,unspecified,spine,1,TEP-1-103,Spine-201,201

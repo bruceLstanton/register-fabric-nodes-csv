@@ -6,19 +6,54 @@
 
 # -*- coding: utf-8 -*-
 import csv
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import requests
 
+NODES_CSV_FILE = "fabric_nodes.csv"
 
-def read(__nodes_file: str, /) -> List[Dict[str, str]]:
+
+def get_sites(__nodes_file: str) -> List[Tuple[str, str]]:
+    """
+    Read unique (Site, APIC IP) pairs from CSV file
+
+    Parameters
+    ----------
+    __nodes_file : str
+        Fabric nodes CSV file name
+
+    Returns
+    -------
+    List[Tuple[str, str]]
+        List of (site, apic_ip) tuples
+    """
+    sites = []
+    seen = set()
+    with open(__nodes_file, mode='r', encoding='utf-8', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        if "Site" not in (reader.fieldnames or []):
+            return []
+        for row in reader:
+            site = row.get("Site", "").strip()
+            apic_ip = row.get("APIC IP", "").strip()
+            if site and (site, apic_ip) not in seen:
+                seen.add((site, apic_ip))
+                sites.append((site, apic_ip))
+    return sites
+
+
+def read(__nodes_file: str, site: str = None, apic_ip: str = None) -> List[Dict[str, str]]:
     """
     Read Fabric nodes from CSV file
 
     Parameters
     ----------
     __nodes_file : str
-        Fabric nodes CSV file name. e.g. "Fabric-Nodes.csv"
+        Fabric nodes CSV file name
+    site : str, optional
+        If provided, only return nodes for this site
+    apic_ip : str, optional
+        If provided with site, filter by APIC IP
 
     Returns
     -------
@@ -42,6 +77,15 @@ def read(__nodes_file: str, /) -> List[Dict[str, str]]:
         reader = csv.DictReader(csvfile)
         
         for row in reader:
+            # Filter by site if specified
+            if site is not None:
+                row_site = row.get("Site", "").strip()
+                if row_site != site:
+                    continue
+                if apic_ip is not None:
+                    row_apic = row.get("APIC IP", "").strip()
+                    if row_apic != apic_ip:
+                        continue
             # Skip duplicates based on Serial Number
             serial = row.get("Serial Number", "").strip()
             if serial in seen_serials:

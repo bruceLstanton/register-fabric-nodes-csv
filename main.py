@@ -21,6 +21,8 @@ import nodes
 
 filterwarnings(action="ignore", message=r"Unverified\sHTTPS\srequest\s.*")
 
+NODES_CSV_FILE = nodes.NODES_CSV_FILE
+
 
 def get_input(prompt: str, default: str = None):
     """Helper function to get user input with an optional default value"""
@@ -29,9 +31,34 @@ def get_input(prompt: str, default: str = None):
 
 
 def main():
-    # Inputs
-    nodes_file = get_input("Nodes CSV file: ", default="Fabric-Nodes.csv")
-    apic = get_input("APIC IP Address: ", default="sandboxapicdc.cisco.com")
+    # Read CSV and get sites
+    try:
+        sites = nodes.get_sites(NODES_CSV_FILE)
+    except FileNotFoundError as e:
+        raise SystemExit(f"{NODES_CSV_FILE} is not found! Check the file exists.") from e
+
+    if not sites:
+        raise SystemExit(
+            f"No sites found in {NODES_CSV_FILE}. Ensure the CSV has Site and APIC IP columns."
+        )
+
+    # Present numbered list of sites
+    print("\nSelect a site:")
+    for i, (site, apic_ip) in enumerate(sites, start=1):
+        print(f"  {i}. {site} ({apic_ip})")
+
+    while True:
+        choice = get_input("\nEnter site number: ")
+        try:
+            idx = int(choice)
+            if 1 <= idx <= len(sites):
+                selected_site, apic = sites[idx - 1]
+                break
+        except ValueError:
+            pass
+        print("Invalid selection. Please enter a valid number.")
+
+    # Credentials
     usr = get_input("Username: ", default="admin")
     pwd = getpass(prompt="Password: ") or "!v3G@!4@Y"
 
@@ -55,10 +82,10 @@ def main():
         }
 
         try:
-            # Read nodes from CSV file
-            fab_nodes = nodes.read(nodes_file)
+            # Read nodes from CSV file for selected site
+            fab_nodes = nodes.read(NODES_CSV_FILE, site=selected_site, apic_ip=apic)
         except FileNotFoundError as e:
-            raise SystemExit(f"{nodes_file} is not found! Check typos") from e
+            raise SystemExit(f"{NODES_CSV_FILE} is not found! Check typos") from e
         else:
             # Register nodes to ACI Fabric
             i, eet = 0, 0.0

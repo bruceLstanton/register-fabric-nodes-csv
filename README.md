@@ -32,7 +32,7 @@ The directory contains the following files:
 │   main.py
 │   apic.py
 │   nodes.py
-│   Fabric-Nodes.csv
+│   fabric_nodes.csv
 |   requirements.txt
 │   README.md
 │   LICENSE
@@ -46,7 +46,7 @@ The directory contains the following files:
 1. `apic.py` module contains the APIC functions to connect and have access to the APIC Controller.
 2. `nodes.py` module contains the functions to read nodes to be registered and register those nodes.
 3. `main.py` module contains the main function to run the application.
-4. `Fabric-Nodes.csv` is a CSV file with nodes to be registered.
+4. `fabric_nodes.csv` is a CSV file with nodes to be registered.
 
 ## Overview
 
@@ -111,9 +111,20 @@ $ python3 -m pip install -r requirements.txt
 
 > **For non Cisco partners, you can use the application with the [ACI Simulator 5.2](https://devnetsandbox.cisco.com/RM/Diagram/Index/740f912b-e9c8-4c7b-a1d7-691649dfa0dd) from Cisco DevNet Sandbox. (Requires reservation)**
 
-Add your ACI fabric nodes to `Fabric-Nodes.csv`.
+Add your ACI fabric nodes to `fabric_nodes.csv`. The CSV must include the following columns:
 
-In `Node Type` column (Column A), you can select only one of the following _four_ valid node types:
+| Column      | Description                          |
+| ----------- | ------------------------------------ |
+| Site        | Site name (used for selection)       |
+| APIC IP     | APIC IP address or hostname for site |
+| Node Type   | See valid values below               |
+| Node Role   | See valid values below               |
+| POD ID      | POD identifier                       |
+| Serial Number | Node serial number                 |
+| Node Name   | Node name                            |
+| Node ID     | Node ID                              |
+
+In the `Node Type` column, you can select only one of the following _four_ valid node types:
 
 1. `unspecified`
 2. `tier-2-leaf`
@@ -122,13 +133,13 @@ In `Node Type` column (Column A), you can select only one of the following _four
 
 > If you don't know which value to select from the `Node Type` column, choose `unspecified`.
 
-In `Node Role` column (Column B), you can select only one of the following _three_ valid node roles:
+In the `Node Role` column, you can select only one of the following _three_ valid node roles:
 
 1. `spine`
 2. `leaf`
 3. `unspecified`
 
-After filling out all columns in `Fabric-Nodes.csv`, double check your entries and save the CSV file.
+After filling out all columns in `fabric_nodes.csv`, double check your entries and save the CSV file.
 
 ![Registered Nodes](assets/registered_nodes.jpg)
 
@@ -150,13 +161,15 @@ $ python3 main.py
 $ python3 -m main
 ```
 
-You will be prompted to enter CSV file, APIC URL, username, and password.
+You will be presented with a numbered list of sites from the CSV file. Enter the number to select a site, then provide your username and password.
 
 Example:
 
 ```bash
-Nodes CSV file: Fabric-Nodes.csv
-APIC IP Address: sandboxapicdc.cisco.com
+Select a site:
+  1. Datacenter1 (sandboxapicdc.cisco.com)
+
+Enter site number: 1
 Username: admin
 Password:
 ```
