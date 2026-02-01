@@ -1,3 +1,9 @@
+# CREDIT
+# The original code is licensed under the BSD 3-Clause License.
+# The original code is copyright (c) 2022, Osama Abbas
+# The original code is available here:
+# https://github.com/Tes3awy/register-fabric-nodes
+
 # -*- coding: utf-8 -*-
 from getpass import getpass
 from warnings import filterwarnings
@@ -9,7 +15,6 @@ from requests.exceptions import (
     InvalidURL,
     Timeout,
 )
-from rich import print
 
 import auth
 import nodes
@@ -25,7 +30,7 @@ def get_input(prompt: str, default: str = None):
 
 def main():
     # Inputs
-    nodes_file = get_input("Nodes Excel file: ", default="Fabric-Nodes.xlsx")
+    nodes_file = get_input("Nodes CSV file: ", default="Fabric-Nodes.csv")
     apic = get_input("APIC IP Address: ", default="sandboxapicdc.cisco.com")
     usr = get_input("Username: ", default="admin")
     pwd = getpass(prompt="Password: ") or "!v3G@!4@Y"
@@ -38,7 +43,7 @@ def main():
     except (InvalidURL, HTTPError, ConnectionError, Timeout) as e:
         raise SystemExit(e) from e
     else:
-        print(f"[green]Accessed {apic} successfully")
+        print(f"Accessed {apic} successfully")
 
         headers = {
             "cookie": r.headers.get("set-cookie"),
@@ -50,7 +55,7 @@ def main():
         }
 
         try:
-            # Read nodes from Excel file
+            # Read nodes from CSV file
             fab_nodes = nodes.read(nodes_file)
         except FileNotFoundError as e:
             raise SystemExit(f"{nodes_file} is not found! Check typos") from e
@@ -63,26 +68,26 @@ def main():
                     reg = nodes.register(apic=apic, headers=headers, node=node)
                 except (HTTPError, ConnectTimeout) as e:
                     print(
-                        f"[red]{node.get('name')}: {e.response.json().get('imdata')[0].get('error').get('attributes').get('text')}"
+                        f"{node.get('name')}: {e.response.json().get('imdata')[0].get('error').get('attributes').get('text')}"
                     )
                 else:
                     eet += reg.elapsed.total_seconds()
                     i += 1
                     print(
-                        f"[green]Registered {node.get('name')} with ID {node.get('node_id')} and S/N {node.get('serial')}"
+                        f"Registered {node.get('name')} with ID {node.get('node_id')} and S/N {node.get('serial')}"
                     )
 
             # Output
             print(
-                f"[blue]Registered {i}/{len(fab_nodes)} nodes in {eet:.2f} seconds",
+                f"Registered {i}/{len(fab_nodes)} nodes in {eet:.2f} seconds",
                 end="\n\n",
             )
 
         out_res = auth.logout(apic=apic, headers=headers, usr=usr)
         if out_res.ok and "deleted" in out_res.headers.get("set-cookie"):
-            print(f"[magenta]Closed {apic} session")
+            print(f"Closed {apic} session")
         else:
-            print("[yellow]Registered nodes but might have not been logged out! Clear the session from the UI")
+            print("Registered nodes but might have not been logged out! Clear the session from the UI")
 
 
 

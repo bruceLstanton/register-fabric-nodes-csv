@@ -1,8 +1,14 @@
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/Tes3awy/register-fabric-nodes)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
-[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat-square&labelColor=ef8336)](https://pycqa.github.io/isort/)
-![LICENSE](https://img.shields.io/github/license/Tes3awy/register-fabric-nodes?color=purple&style=flat-square&label=LICENSE)
-![Commit Activity](https://img.shields.io/github/commit-activity/m/Tes3awy/register-fabric-nodes/main?logo=github&style=flat-square)
+# Credit
+- The original code is licensed under the BSD 3-Clause License.
+- The original code is copyright (c) 2022, Osama Abbas
+- The original code is available here:
+https://github.com/Tes3awy/register-fabric-nodes
+
+# Changes from Source
+- Credit to the orginal creator added to all code files
+- Uses CSV files instead of MS Excel files
+- Requirements stripped down to just the "requests" module
+- Updated screenshots for assets
 
 # Register Nodes to ACI Fabric
 
@@ -17,7 +23,6 @@
 3. [Fabric Node Discovery Statuses](#fabric-node-discovery-statuses)
 4. [Installation](#installation)
 5. [Register Fabric Nodes](#register-fabric-nodes)
-6. [Bonus (Cobra SDK)](#bonus)
 
 ## Directory Structure
 
@@ -27,8 +32,7 @@ The directory contains the following files:
 │   main.py
 │   apic.py
 │   nodes.py
-│   apic_cobra.py
-│   Fabric-Nodes.xlsx
+│   Fabric-Nodes.csv
 |   requirements.txt
 │   README.md
 │   LICENSE
@@ -42,8 +46,7 @@ The directory contains the following files:
 1. `apic.py` module contains the APIC functions to connect and have access to the APIC Controller.
 2. `nodes.py` module contains the functions to read nodes to be registered and register those nodes.
 3. `main.py` module contains the main function to run the application.
-4. `Fabric-Nodes.xlsx` is an MS Excel spreadsheet with four nodes to be registered _(All Columns are validated using [Excel data validation](https://support.microsoft.com/en-us/office/apply-data-validation-to-cells-29fecbcc-d1b9-42c1-9d76-eff3ce5f7249) feature to restrict duplicate or invalid data and to show an error alert even before registering the nodes)_.
-5. For `apic_cobra.py` module, check [Bonus](#bonus) section.
+4. `Fabric-Nodes.csv` is a CSV file with nodes to be registered.
 
 ## Overview
 
@@ -104,11 +107,11 @@ $ python3 -m pip install -r requirements.txt
 
 ## Register Fabric Nodes
 
-> An Excel file is already attached in the repo and is prepopulated with two leafs and two spines from [Getting Started with Cisco ACI 5.2 v1](https://dcloud2-lon.cisco.com/content/demo/505213?returnPathTitleKey=content-view) from Cisco dCloud.
+> A CSV file is already attached in the repo and is prepopulated with two leafs and a spine
 
 > **For non Cisco partners, you can use the application with the [ACI Simulator 5.2](https://devnetsandbox.cisco.com/RM/Diagram/Index/740f912b-e9c8-4c7b-a1d7-691649dfa0dd) from Cisco DevNet Sandbox. (Requires reservation)**
 
-Add your ACI fabric nodes to `Fabric-Nodes.xlsx`.
+Add your ACI fabric nodes to `Fabric-Nodes.csv`.
 
 In `Node Type` column (Column A), you can select only one of the following _four_ valid node types:
 
@@ -125,7 +128,7 @@ In `Node Role` column (Column B), you can select only one of the following _thre
 2. `leaf`
 3. `unspecified`
 
-After filling out all columns in `Fabric-Nodes.xlsx`, double check your entries, save the Excel file, and exit MS Excel.
+After filling out all columns in `Fabric-Nodes.csv`, double check your entries and save the CSV file.
 
 ![Registered Nodes](assets/registered_nodes.jpg)
 
@@ -147,12 +150,12 @@ $ python3 main.py
 $ python3 -m main
 ```
 
-You will be prompted to enter Excel file, APIC URL, username, and password.
+You will be prompted to enter CSV file, APIC URL, username, and password.
 
 Example:
 
 ```bash
-Nodes Excel file: Fabric-Nodes.xlsx
+Nodes CSV file: Fabric-Nodes.csv
 APIC IP Address: sandboxapicdc.cisco.com
 Username: admin
 Password:
@@ -160,14 +163,3 @@ Password:
 
 > **Note:** After a successful run, the node is removed from the `Nodes Pending Registration` tab table to `Registered Nodes` tab table and you cannot by any means update/edit neither the `node type` nor the `node id`.
 
----
-
-## Bonus
-
-If you have downloaded and installed the Cobra SDK _(i.e., `acicobra` and `acimodel` wheel files)_, you can run the application using `apic_cobra.py`. It's faster than the regular application (Around 1.8x faster).
-
-```bash
-$ python apic_cobra.py
-# or
-$ python -m apic_cobra
-```

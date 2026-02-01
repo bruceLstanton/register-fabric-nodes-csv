@@ -1,3 +1,10 @@
+# CREDIT
+# The original code is licensed under the BSD 3-Clause License.
+# The original code is copyright (c) 2022, Osama Abbas
+# The original code is available here:
+# https://github.com/Tes3awy/register-fabric-nodes
+
+
 # -*- coding: utf-8 -*-
 import requests
 
